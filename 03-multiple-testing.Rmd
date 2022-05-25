@@ -1,0 +1,80 @@
+class: inverse, center, middle
+# Adjustment for multiple testing
+
+
+---
+# Example of many p-values
+
+.medium[
+
+.pull-left[
+The **false-discovery rate** correction and **other approaches** can be implemented with the R function `p.adjust()`. 
+
+P-values for association between 10 gene mutations and treatment response:
+]
+
+
+.pull-right[
+```{r echo = FALSE}
+tibble::tibble(
+  Gene = paste0("gene", seq(1:10)),
+  `p-value` = c(0.001, 0.245, 0.784, 0.034, 0.004, 0.123, 0.089, 0.063, 0.228, 
+                0.802)
+  ) %>% 
+  knitr::kable()
+```
+
+]
+
+]
+
+
+---
+# False-discovery rate adjustment
+
+.medium[
+Adjust these for multiple testing using the false-discovery rate approach. Pass the vector of p-values to `p.adjust()` and specify `method = "fdr"`:
+
+```{r}
+p.adjust(
+  p = c(0.001, 0.245, 0.784, 0.034, 0.004, 0.123, 0.089, 0.063, 0.228, 0.802),
+  method = "fdr"
+)
+```
+
+Get back a **vector of the adjusted p-values**, listed in the same order as the originally provided p-values.
+]
+
+
+
+---
+# Using the {gtsummary} package
+
+.medium[
+Add adjusted p-values to results tables made with the {gtsummary} package using the function `add_q()`:
+]
+
+.pull-left[
+```{r mult-comp, eval = FALSE, message = FALSE}
+tbl_summary(
+  trial[, c("age", "marker", "trt")],
+  by = trt
+  ) %>% 
+  add_p() %>% 
+  add_q()
+```
+
+*Note that "q-value" is a common term for p-values that have been adjusted for multiple comparisons*.
+
+By default, the FDR correction is applied, but all methods from `p.adjust()` can be specified using the `method` argument to `add_q()`.
+]
+
+.pull-right[
+```{r ref.label = "mult-comp", echo = FALSE}
+```
+
+*Note that this table is for demonstration purposes only*.
+]
+
+
+

@@ -1,0 +1,69 @@
+class: inverse, center, middle
+# {gtsummary} review
+
+---
+# Summarizing many variables
+
+.medium[
+Often will need a "Table 1" describing many characteristics of a study population either **overall**, or **according to another variable**. 
+
+There are many packages to do this in R, including the {gtsummary} package.
+
+Install and load the {gtsummary} package:
+
+```{r eval = FALSE}
+install.packages("gtsummary")
+```
+
+```{r}
+library(gtsummary)
+```
+
+The summary statistics can be customized in many ways. See [the package website](https://www.danieldsjoberg.com/gtsummary/index.html) for more details and many tutorials.
+
+Note that the functions from the {gtsummary} package are **particularly useful** when used **in conjunction with R Markdown**, since they are meant to produce publication-ready tables.
+]
+
+---
+# Overall summary tables
+
+.medium[
+Make **overall descriptive statistic tables** using the `tbl_summary()` function. Subset the data for the variables of interest within the function:
+]
+
+.pull-left[
+```{r ex-tbl, eval = FALSE}
+tbl_summary(
+  data = trial[, c("marker", "grade")]
+  )
+```
+]
+
+.pull-right[
+```{r ref.label="ex-tbl", echo = FALSE}
+```
+]
+
+
+---
+# Cross-tabulated summary tables
+
+.medium[
+Make tables of **descriptive statistics according to another variable** using the `by` argument to the `tbl_summary()` function:
+]
+
+.pull-left[
+```{r ex-tbl-by, eval = FALSE}
+tbl_summary(
+  trial[, c("marker", "grade", "trt")], 
+  by = "trt"
+)
+```
+]
+
+.pull-right[
+```{r ref.label = "ex-tbl-by", echo = FALSE}
+```
+]
+
+

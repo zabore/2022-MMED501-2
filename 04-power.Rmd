@@ -1,0 +1,129 @@
+class: inverse, center, middle
+# Basic power calculations
+
+
+---
+# Get help!
+
+.xlarge[
+Most importantly: **consult a statistician**
+]
+
+<br>
+
+.large[
+Opinion: R is **not the best** for power and sample size calculations. Commercial software programs like **EAST** and **PASS** are easier to use and have more options.
+]
+
+
+---
+# R functions for power calculations
+
+.large[
+But for the most **basic power calculations**, the following functions are available in R:
+
+- `power.t.test()`
+- `power.prop.test()`
+]
+
+
+
+---
+# Power for a t-test
+
+.medium[
+`power.t.test()` can compute the power of a **one-sample** or **two-sample** t-test. The main arguments are:
+
+`n`: sample size
+
+`delta`: true difference in means
+
+`sd`: standard deviation
+
+`sig.level`: type I error probability, i.e. alpha
+
+`power`: power, i.e. 1 minus type II error probability
+
+<br>
+
+Exactly **one** of these arguments can be specified as `NULL` and that parameter will be estimated based on the others. 
+]
+
+
+---
+# Example of t-test power
+
+.medium[
+What **sample size** is needed to detect a difference of **0.5 units** in mean biomarker level between two treatment groups when the **standard deviation is 0.8**, the **type I error is 0.05** and the **type II error is 0.1**.
+]
+
+.pull-left[
+```{r tpower, eval = FALSE}
+power.t.test(n = NULL, 
+             delta = 0.5, 
+             sd = 0.8,
+             sig.level = 0.05,
+             power = 0.9, 
+             type = "two.sample",  
+             alternative = "one.sided")
+```
+]
+
+.pull-right[
+```{r ref.label="tpower", echo = FALSE}
+```
+]
+
+We find that we need **45 patients in each group** in order to conduct this test.
+
+---
+# Power for a proportion test
+
+.medium[
+`power.prop.test()` can compute the power of the **two-sample test for proportions**. The main arguments are:
+
+`n`: sample size
+
+`p1`: probability in group 1
+
+`p2`: probability in group 2
+
+`sig.level`: type I error probability, i.e. alpha
+
+`power`: power, i.e. 1 minus type II error probability 
+
+<br>
+
+Exactly **one** of these arguments can be specified as `NULL` and that parameter will be estimated based on the others. 
+]
+
+
+---
+# Example of proportion test power
+
+.medium[
+What **power** do we have to detect a difference between a **0.34 response rate** and a **0.54 response rate** if we have **100 patients in each group** at a **type I error rate of 0.05**.
+]
+
+.left-column[
+```{r proppower, eval = FALSE}
+power.prop.test(
+  n = 100,
+  p1 = 0.34,
+  p2 = 0.54,
+  sig.level = 0.05,
+  power = NULL,
+  alternative = "one.sided"
+)
+```
+]
+
+.right-column[
+```{r ref.label = "proppower", echo = FALSE}
+```
+]
+
+<br>
+
+And we find that we have **89% power** for this test.
+

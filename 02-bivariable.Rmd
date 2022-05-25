@@ -1,0 +1,326 @@
+class: inverse, center, middle
+# Bivariable statistical tests
+
+---
+# Two categorical variables
+
+.medium[
+
+There are two main tests for associations between **two categorical variables**: the **chi-squared** test and **Fisher's exact** test. 
+
+Conduct these tests in R using the following functions:
+
+- `chisq.test()` 
+- `fisher.test()`
+
+]
+
+
+---
+# Chi-squared test
+
+.medium[
+Conduct a chi-squared test of the **null hypothesis that there is no association** between treatment and response versus the alternative hypothesis that there is an association between treatment and response.
+
+```{r}
+chisq.test(x = trial$trt, y = trial$response)
+```
+
+The chi-squared test statistic is `r round(chisq.test(trial$trt, trial$response)$statistic, 5)` with associated p-value `r round(chisq.test(trial$trt, trial$response)$p.value, 4)`. 
+
+**Do not reject the null hypothesis** since the p-value is greater than the traditional threshold for significance of 0.05. 
+]
+
+---
+# Fisher's exact test
+
+.medium[
+Conduct a Fisher's exact test (an alternative to the chi-squared test when any **expected cell count is <5**):
+
+```{r}
+fisher.test(x = trial$trt, y = trial$response)
+```
+
+The p-value is `r round(fisher.test(trial$trt, trial$response)$p.value, 4)`.
+
+Do not reject the null hypothesis of no association between treatment and response since the p-value is greater than the traditional threshold for significance of 0.05.  
+]
+
+---
+# An R programming aside - the pipe
+
+.large[
+The **pipe** operator: `%>%`
+
+- Strings multiple functions together into a sequence
+- From the {magrittr} padckage but loaded with many other packages including {gtsummary}
+- Allows for code that is easier to read and understand
+- Replaces nested functions
+]
+
+
+---
+# First, create a basic contingency table
+
+.medium[
+Use `tbl_summary()` to create a table of tumor grade according to response:
+]
+
+.pull-left[
+```{r basic-tbl, eval = FALSE}
+tbl_summary(
+  data = trial[, c("grade", "response")],
+  by = response
+  )
+```
+]
+
+.pull-right[
+```{r ref.label = "basic-tbl", echo = FALSE}
+```
+]
+
+<br>
+<br>
+
+.medium[
+*Note the message that missing values in response have been removed from this table and offering an option to include them as an additional column*
+]
+
+
+---
+# Next, add p-values
+
+.large[
+Use the function `add_p()` to add p-values to this table. 
+
+By default, this function will use the chi-squared test *without* the continuity correction if all expected cell counts are $\geq5$ and will use Fisher's exact test if any expected cell count is <5. 
+
+The primary argument to `add_p()` is the results of a call to `tbl_summary()`.
+
+But **how** do we pass the table results to this function?
+]
+
+
+---
+# Approach 1: Intermediate object
+
+.medium[
+Create an intermediate object "mytbl" for the results of `tbl_summary()`:
+]
+
+.pull-left[
+```{r app1, eval = FALSE, message = FALSE}
+mytbl <- tbl_summary(
+  data = trial[, c("grade", "response")],
+  by = response
+  )
+
+add_p(mytbl)
+```
+]
+
+.pull-right[
+```{r ref.label = "app1", echo = FALSE}
+```
+]
+
+<br>
+<br>
+
+.medium[
+The **disadvantage** of this approach is the creation and storage of an object  **not needed again**.
+]
+
+
+---
+# Approach 2: Nested functions
+
+.medium[
+Wrap `tbl_summary()` inside `add_p()`:
+]
+
+.pull-left[
+```{r app2, eval = FALSE, message = FALSE}
+add_p(
+  tbl_summary(
+    data = trial[, c("grade", "response")],
+    by = response
+    )
+  )
+```
+]
+
+.pull-right[
+```{r ref.label="app2", echo = FALSE}
+```
+]
+
+<br>
+<br>
+
+.medium[
+The **disadvantage** is that this code can be **hard to read** and it is read **from the inside out**.
+] 
+
+
+---
+# Approach 3: The pipe operator
+
+.medium[
+Use the pipe operator to string the two functions together:
+]
+
+.pull-left[
+```{r "app3", eval = FALSE, message = FALSE}
+tbl_summary(
+  data = trial[, c("grade", "response")],
+  by = response
+  ) %>% 
+  add_p()
+```
+]
+
+.pull-right[
+```{r ref.label="app3", echo = FALSE}
+```
+]
+
+<br>
+<br>
+
+.medium[
+The **left hand side** is passed as the **first argument** to the function on the **right hand side**.
+]
+
+
+---
+# One continuous, one categorical
+
+.medium[
+The most common statistical tests for the association between a continuous and a categorical variable are the **non-parametric Kruskal-Wallis** test and the **parametric t-test**. 
+
+Conduct these tests in R using the following functions:
+
+- `kruskal.test()` (see also `wilcox.test()`)
+- `t.test()`
+
+*Note that the Kruskal-Wallis test is also known as the **Wilcoxon rank-sum** test in the special case of a 2-level categorical variable.*
+]
+
+
+---
+# Kruskal-Wallis test
+
+.medium[
+
+Conduct a Kruskal-Wallis test to test the **null hypothesis of no association between marker status and response** versus the alternative hypothesis that there is an association between marker status and response.
+
+```{r}
+kruskal.test(marker ~ response, data = trial)
+```
+
+]
+
+
+---
+# Wilcoxon rank-sum test
+
+.medium[
+
+Since "response" is a 2-level categorical variable the Wilcoxon rank-sum test (without continuity correction) produces the **same result**:
+
+```{r}
+wilcox.test(marker ~ response, correct = FALSE, data = trial)
+```
+
+With a p-value of `r round(wilcox.test(marker ~ response, correct = FALSE, data = trial)$p.value, 3)`, **do not reject** the null hypothesis at the 0.05 significance level.
+]
+
+
+---
+# t-test
+
+.medium[
+If appropriate given the distribution of the continuous variable, conduct a t-test:
+
+```{r}
+t.test(marker ~ response, data = trial)
+```
+
+The **p-value differs** but the **conclusion is the same**: do not reject the null hypothesis that there is no association between marker and response.
+]
+
+
+---
+# Histogram of marker distribution
+
+.large[
+
+.pull-left[
+.medium[
+In this example the data are **right-skewed** so a t-test is **not appropriate**.
+
+```{r echo = FALSE}
+library(ggplot2)
+```
+
+```{r hist-code, eval = FALSE}
+ggplot(data = trial, aes(x = marker)) +
+  geom_histogram(bins = 10)
+```
+]
+]
+
+.pull-right[
+
+```{r ref.label = "hist-code", echo = FALSE}
+```
+
+]
+
+]
+
+
+---
+# Multiple continuous variables
+
+.medium[
+Use `tbl_summary()` with `add_p()` from the {gtsummary} package to summarize **multiple continuous variables** with respect to a categorical variable:
+]
+
+.pull-left[
+```{r mult-cont, eval = FALSE, message = FALSE}
+trial[, c("age", "marker", "response")] %>% 
+  tbl_summary(
+    by = response
+    ) %>% 
+  add_p()
+```
+]
+
+.pull-right[
+```{r ref.label = "mult-cont", echo = FALSE}
+```
+]
+
+
+
+---
+# Mixture of variable types
+
+.pull-left[
+```{r mix-tbl, eval = FALSE, message = FALSE}
+trial[, c("grade", "marker", "response")] %>% 
+  tbl_summary(
+    by = response
+    ) %>% 
+  add_p()
+```
+]
+
+.pull-right[
+```{r ref.label = "mix-tbl", echo = FALSE}
+```
+]
+

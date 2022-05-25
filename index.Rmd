@@ -1,0 +1,89 @@
+---
+title: "MMED501: Biostatistics and Epidemiology"
+subtitle: "Basic Statistical Analyses in R"  
+author: "Emily C Zabor"
+date: 'May 26, 2022'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, custom.css]
+    lib_dir: libs
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = ezfun::ccf_palette("main")[1],
+  colors = c(
+    green = "#00843d"
+  )
+) 
+```
+
+class: inverse, center, title-slide, middle
+
+# MMED501: Biostatistics and Epidemiology
+
+## Basic Statistical Analyses in R
+
+<br>
+
+### Emily C. Zabor
+
+#### May 26, 2022
+
+<br>
+
+<p align="center"><img src="img/CC_hires_r.png" width=30%></p>
+
+
+---
+```{r child='01-gtsummary.Rmd'}
+```
+
+---
+```{r child='02-bivariable.Rmd'}
+```
+
+---
+```{r child='03-multiple-testing.Rmd'}
+```
+
+---
+```{r child='04-power.Rmd'}
+```
+
+---
+
+.xxlarge[
+These slides are available at:
+
+[https://www.emilyzabor.com/2022-MMED501-2](https://www.emilyzabor.com/2022-MMED501-2)
+
+<br>
+And also on the course website.
+
+<br>
+Questions: zabore2@ccf.org
+]
+
+
+
