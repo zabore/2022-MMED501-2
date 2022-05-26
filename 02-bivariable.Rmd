@@ -53,7 +53,7 @@ Do not reject the null hypothesis of no association between treatment and respon
 The **pipe** operator: `%>%`
 
 - Strings multiple functions together into a sequence
-- From the {magrittr} padckage but loaded with many other packages including {gtsummary}
+- From the {magrittr} package but loaded with many other packages including {gtsummary}
 - Allows for code that is easier to read and understand
 - Replaces nested functions
 ]
